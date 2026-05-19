@@ -1,6 +1,7 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
-import { business, services } from "../data/site";
+import ServiceRequestForm from "../components/ServiceRequestForm.astro";
+import { business, serviceArea } from "../data/site";
 
 const description =
   "Contact Appalachian Wastewater for septic pumping, inspections, emergency septic service, drain field diagnostics, grease trap pumping, and maintenance for East Tennessee properties.";
@@ -24,42 +25,20 @@ const schema = {
     <span class="eyebrow">Contact</span>
     <h1>Request septic or wastewater service for your property.</h1>
     <p class="lead">
-      Call for the fastest response, especially for backups, alarms, odors, or
-      slow drains. You can also send a service request for homes, businesses,
-      rentals, cabins, churches, restaurants, and rural properties.
+      Call for urgent septic problems, or use the quick request form for
+      pumping, inspections, maintenance, grease trap pumping, and other service
+      needs across East Tennessee properties.
     </p>
   </section>
 
   <section class="section">
     <div class="contact-grid">
       <div class="contact-panel">
-        <span class="eyebrow">Service Request</span>
-        <h2>Tell us what is happening on site.</h2>
-        <form class="contact-form" action={`mailto:${business.email}`} method="post" enctype="text/plain">
-          <label>
-            Name
-            <input name="name" autocomplete="name" required />
-          </label>
-          <label>
-            Phone
-            <input name="phone" type="tel" autocomplete="tel" required />
-          </label>
-          <label>
-            Email
-            <input name="email" type="email" autocomplete="email" />
-          </label>
-          <label>
-            Service Type
-            <select name="service">
-              {services.map((service) => <option>{service.title}</option>)}
-            </select>
-          </label>
-          <label>
-            Property Location and Notes
-            <textarea name="message" placeholder="Address, access notes, symptoms, timing, and any alarms or backups." required></textarea>
-          </label>
-          <button class="button button-primary" type="submit">Send Request</button>
-        </form>
+        <ServiceRequestForm
+          source="contact-page"
+          heading="Tell us what is happening on site."
+          intro="Use this form for homes, rural properties, restaurants, campgrounds, cabins, churches, rentals, small businesses, and light commercial properties."
+        />
       </div>
 
       <aside class="contact-panel">
@@ -73,11 +52,37 @@ const schema = {
           <a class="button button-primary" href={business.phoneHref}>{business.phone}</a>
           <a class="button button-secondary" href={business.emailHref}>{business.email}</a>
         </div>
-        <div class="feature" style="margin-top: 28px;">
+
+        <div class="contact-note">
+          <strong>Emergency service</strong>
+          <p>
+            If sewage is backing up, drains are suddenly slowing, alarms are
+            active, or odors are strong, calling is the fastest way to start the
+            conversation.
+          </p>
+        </div>
+
+        <div class="contact-note">
+          <strong>What to expect</strong>
+          <p>
+            Share the city, property type, service need, symptoms, and access
+            notes. Appalachian Wastewater will review the request and help
+            identify the right next step.
+          </p>
+        </div>
+
+        <div class="contact-note">
+          <strong>Service area</strong>
+          <ul class="mini-area-list">
+            {serviceArea.map((area) => <li>{area}</li>)}
+          </ul>
+        </div>
+
+        <div class="contact-note">
           <strong>Helpful details</strong>
           <p>
-            Share the property address, tank access if known, service history,
-            current symptoms, and whether this is an emergency.
+            Property address, tank access if known, service history, current
+            symptoms, and whether the request is urgent.
           </p>
         </div>
       </aside>

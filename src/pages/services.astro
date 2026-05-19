@@ -3,6 +3,7 @@ import BaseLayout from "../layouts/BaseLayout.astro";
 import ServiceCard from "../components/ServiceCard.astro";
 import CtaBand from "../components/CtaBand.astro";
 import { business, services } from "../data/site";
+import { servicePageMap } from "../data/servicePages";
 
 const description =
   "Septic pumping, inspections, emergency septic service, tank locating, drain field diagnostics, grease trap pumping, and septic maintenance for East Tennessee properties.";
@@ -40,7 +41,12 @@ const schema = services.map((service) => ({
   <section class="section">
     <div class="services-grid">
       {services.map((service, index) => (
-        <ServiceCard title={service.title} description={service.description} index={index} />
+        <ServiceCard
+          title={service.title}
+          description={service.description}
+          index={index}
+          href={servicePageMap.has(service.slug) ? `/services/${service.slug}/` : undefined}
+        />
       ))}
     </div>
   </section>

@@ -1,0 +1,157 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import CtaBand from "../../components/CtaBand.astro";
+import { business, serviceArea } from "../../data/site";
+import { servicePageMap, servicePages, serviceAreaSentence } from "../../data/servicePages";
+
+export function getStaticPaths() {
+  return servicePages.map((service) => ({
+    params: { slug: service.slug },
+    props: { service },
+  }));
+}
+
+const { service } = Astro.props;
+const relatedServices = service.related
+  .map((slug: string) => servicePageMap.get(slug))
+  .filter(Boolean);
+
+const schema = {
+  "@context": "https://schema.org",
+  "@type": "Service",
+  name: service.title,
+  description: service.metaDescription,
+  provider: {
+    "@type": "LocalBusiness",
+    name: business.name,
+    telephone: business.phone,
+    email: business.email,
+    url: business.url,
+  },
+  areaServed: serviceArea.map((name) => ({ "@type": "City", name })),
+  serviceArea: {
+    "@type": "Place",
+    name: "East Tennessee",
+  },
+};
+---
+
+<BaseLayout title={service.seoTitle} description={service.metaDescription} canonical={`/services/${service.slug}/`} schema={schema}>
+  <section class="page-hero service-detail-hero">
+    <span class="eyebrow">Service</span>
+    <h1>{service.h1}</h1>
+    <p class="lead">{service.intro}</p>
+    <div class="hero-actions">
+      <a class="button button-primary" href={business.phoneHref}>Call {business.phone}</a>
+      <a class="button button-secondary" href="/contact/">Request Service</a>
+    </div>
+  </section>
+
+  <section class="section service-detail-grid">
+    <article class="detail-panel detail-panel-large">
+      <span class="eyebrow">Who It Is For</span>
+      <h2>Built for East Tennessee property needs.</h2>
+      <p>
+        Appalachian Wastewater serves properties across {serviceAreaSentence},
+        including residential, rural, hospitality, church, rental, small
+        business, and light commercial sites.
+      </p>
+      <ul class="check-list">
+        {service.whoFor.map((item: string) => <li>{item}</li>)}
+      </ul>
+    </article>
+
+    <aside class="detail-panel">
+      <span class="eyebrow">Call Now</span>
+      <h2>{business.phone}</h2>
+      <p>
+        Talk with Appalachian Wastewater about the property, symptoms, access,
+        and timing. We will help identify the right next step.
+      </p>
+      <a class="button button-primary" href={business.phoneHref}>Call {business.phone}</a>
+    </aside>
+  </section>
+
+  <section class="section split-panels">
+    <div class="detail-panel">
+      <span class="eyebrow">Signs You May Need This</span>
+      <h2>Watch for clear warning signs.</h2>
+      <ul class="check-list">
+        {service.signs.map((item: string) => <li>{item}</li>)}
+      </ul>
+    </div>
+
+    <div class="detail-panel">
+      <span class="eyebrow">What We Do</span>
+      <h2>Professional service, clearly explained.</h2>
+      <ul class="check-list">
+        {service.process.map((item: string) => <li>{item}</li>)}
+      </ul>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="section-header">
+      <div>
+        <span class="eyebrow">Why Choose Appalachian Wastewater</span>
+        <h2>Premium standards for practical property service.</h2>
+      </div>
+      <p>
+        The work should feel organized, respectful, and easy to understand,
+        whether the site is a home, restaurant, rental, campground, church,
+        cabin, rural property, or light commercial operation.
+      </p>
+    </div>
+    <div class="feature-grid">
+      {service.why.map((item: string) => (
+        <div class="feature">
+          <strong>{item}</strong>
+          <p>Clear communication, clean field practices, and a regional service focus.</p>
+        </div>
+      ))}
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="area-band">
+      <div class="area-panel">
+        <span class="eyebrow">Local Service Area</span>
+        <h2>Serving Greene County and nearby East Tennessee communities.</h2>
+        <p>
+          Service is focused on East Tennessee properties in the communities
+          listed below.
+        </p>
+        <ul class="area-list">
+          {serviceArea.map((area) => <li>{area}</li>)}
+        </ul>
+      </div>
+      <div class="region-panel" aria-label="East Tennessee service area presentation">
+        <span class="map-label">Service Region</span>
+        <strong>East Tennessee properties</strong>
+        <p>{serviceAreaSentence}</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="related-panel">
+      <div>
+        <span class="eyebrow">Related Services</span>
+        <h2>Other services that may help.</h2>
+      </div>
+      <div class="related-links">
+        {relatedServices.map((related: any) => (
+          <a href={`/services/${related.slug}/`}>{related.title}</a>
+        ))}
+        <a href="/services/">View all services</a>
+      </div>
+    </div>
+  </section>
+
+  <CtaBand
+    emergency={service.slug === "emergency-septic-service"}
+    eyebrow="Request Service"
+    title={`Need ${service.title.toLowerCase()}?`}
+    text={`Call Appalachian Wastewater at ${business.phone} or request service for your East Tennessee property.`}
+  />
+</BaseLayout>

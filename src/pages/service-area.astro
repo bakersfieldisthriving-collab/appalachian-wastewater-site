@@ -2,6 +2,7 @@
 import BaseLayout from "../layouts/BaseLayout.astro";
 import CtaBand from "../components/CtaBand.astro";
 import { business, serviceArea } from "../data/site";
+import { cityPageMap } from "../data/cityPages";
 
 const description =
   "Appalachian Wastewater serves Greeneville and nearby East Tennessee communities with septic pumping, inspections, maintenance, diagnostics, grease trap pumping, and emergency service.";
@@ -39,7 +40,10 @@ const schema = {
           confirm availability.
         </p>
         <ul class="area-list">
-          {serviceArea.map((area) => <li>{area}</li>)}
+          {serviceArea.map((area) => {
+            const city = cityPageMap.get(area.toLowerCase().replaceAll(" ", "-"));
+            return <li>{city ? <a href={`/service-area/${city.slug}/`}>{area}</a> : area}</li>;
+          })}
         </ul>
       </div>
       <div class="region-panel" aria-label="East Tennessee regional service presentation">

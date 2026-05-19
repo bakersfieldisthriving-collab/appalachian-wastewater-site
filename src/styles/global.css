@@ -349,8 +349,23 @@ h3 {
 .service-card p,
 .feature p,
 .area-panel p,
-.contact-panel p {
+.contact-panel p,
+.detail-panel p,
+.related-panel p {
   color: var(--slate-light);
+}
+
+.text-link {
+  display: inline-flex;
+  width: max-content;
+  margin-top: 18px;
+  border-bottom: 1px solid rgba(242, 135, 53, 0.6);
+  color: #fff;
+  font-weight: 800;
+}
+
+.text-link:hover {
+  color: var(--orange);
 }
 
 .feature-grid {
@@ -403,6 +418,16 @@ h3 {
   padding: 10px 12px;
   color: #fff;
   background: rgba(216, 222, 229, 0.06);
+}
+
+.area-list a {
+  display: block;
+  color: #fff;
+  font-weight: 800;
+}
+
+.area-list li:hover {
+  border-color: rgba(242, 135, 53, 0.42);
 }
 
 .region-panel {
@@ -524,6 +549,111 @@ h3 {
   font-size: clamp(2.8rem, 6vw, 5.4rem);
 }
 
+.service-detail-hero h1 {
+  max-width: 980px;
+}
+
+.service-detail-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(300px, 0.42fr);
+  gap: 18px;
+}
+
+.split-panels {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 18px;
+}
+
+.detail-panel,
+.related-panel {
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 34px;
+  background:
+    linear-gradient(145deg, rgba(216, 222, 229, 0.07), transparent 44%),
+    var(--surface-solid);
+}
+
+.detail-panel-large {
+  min-height: 420px;
+}
+
+.detail-panel h2,
+.related-panel h2 {
+  margin-bottom: 16px;
+  font-size: clamp(1.8rem, 3vw, 2.9rem);
+}
+
+.detail-panel .button {
+  margin-top: 18px;
+}
+
+.stacked-actions {
+  display: grid;
+  gap: 12px;
+  margin-top: 22px;
+}
+
+.stacked-actions .button {
+  width: 100%;
+  margin-top: 0;
+}
+
+.check-list {
+  display: grid;
+  gap: 12px;
+  margin: 26px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.check-list li {
+  position: relative;
+  padding-left: 28px;
+  color: var(--silver);
+}
+
+.check-list li::before {
+  position: absolute;
+  top: 0.72em;
+  left: 0;
+  width: 10px;
+  height: 10px;
+  border: 1px solid rgba(242, 135, 53, 0.76);
+  border-radius: 50%;
+  content: "";
+  transform: translateY(-50%);
+  background: rgba(242, 135, 53, 0.18);
+}
+
+.related-panel {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 28px;
+}
+
+.related-links {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+.related-links a {
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  padding: 10px 12px;
+  background: rgba(216, 222, 229, 0.06);
+  color: #fff;
+  font-weight: 800;
+}
+
+.related-links a:hover {
+  border-color: rgba(242, 135, 53, 0.58);
+}
+
 .contact-grid {
   display: grid;
   grid-template-columns: minmax(0, 0.72fr) minmax(320px, 0.48fr);
@@ -542,40 +672,130 @@ h3 {
   font-weight: 800;
 }
 
+.contact-panel > .request-form {
+  border: 0;
+  padding: 0;
+  background: transparent;
+  box-shadow: none;
+  backdrop-filter: none;
+}
+
+.contact-note {
+  margin-top: 22px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 20px;
+  background: rgba(216, 222, 229, 0.05);
+}
+
+.contact-note strong {
+  display: block;
+  margin-bottom: 8px;
+  color: #fff;
+}
+
+.contact-note p {
+  margin: 0;
+}
+
+.mini-area-list {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+  margin: 12px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.mini-area-list li {
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  padding: 8px 10px;
+  color: var(--silver);
+  background: rgba(6, 17, 31, 0.42);
+  font-size: 0.9rem;
+}
+
 .contact-form {
   display: grid;
   gap: 14px;
 }
 
-.lead-form {
+.request-form {
   display: grid;
-  gap: 13px;
+  gap: 18px;
   border: 1px solid rgba(216, 222, 229, 0.24);
   border-radius: 8px;
   padding: 24px;
-  background: rgba(8, 24, 39, 0.86);
+  background:
+    linear-gradient(145deg, rgba(216, 222, 229, 0.06), transparent 42%),
+    rgba(8, 24, 39, 0.88);
   box-shadow: 0 22px 70px rgba(0, 0, 0, 0.34);
   backdrop-filter: blur(18px);
 }
 
-.lead-form h2 {
-  margin-bottom: 4px;
+.request-form h2 {
   font-size: 1.45rem;
   line-height: 1.1;
 }
 
-.lead-form .button {
-  width: 100%;
-  margin-top: 4px;
+.request-form p {
+  margin: 0;
+  color: var(--slate-light);
 }
 
-.lead-form p {
+.request-form-compact {
+  gap: 14px;
+}
+
+.request-form-compact .form-grid {
+  gap: 11px;
+}
+
+.request-form-compact textarea {
+  min-height: 92px;
+}
+
+.request-form-compact .form-heading p {
+  font-size: 0.92rem;
+}
+
+.request-form-compact .form-actions {
+  grid-template-columns: 1fr;
+}
+
+.form-heading {
+  display: grid;
+  gap: 6px;
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.form-wide {
+  grid-column: 1 / -1;
+}
+
+.form-actions {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 12px;
+}
+
+.form-actions .button {
+  width: 100%;
+}
+
+.form-footnote {
   margin: 0;
   color: var(--slate-light);
   font-size: 0.9rem;
 }
 
-.lead-form a {
+.request-form a {
   color: #fff;
   font-weight: 800;
 }
@@ -592,6 +812,39 @@ label {
   gap: 8px;
   color: #fff;
   font-weight: 800;
+}
+
+fieldset {
+  min-width: 0;
+  border: 1px solid rgba(216, 222, 229, 0.22);
+  border-radius: 6px;
+  padding: 10px 12px;
+  color: #fff;
+}
+
+legend {
+  padding: 0 6px;
+  color: #fff;
+  font-weight: 800;
+}
+
+.emergency-field {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.emergency-field label {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--slate-light);
+  font-weight: 800;
+}
+
+.emergency-field input {
+  width: auto;
+  accent-color: var(--orange);
 }
 
 input,
@@ -689,17 +942,26 @@ textarea {
   .hero-content,
   .section-header,
   .services-grid,
+  .service-detail-grid,
+  .split-panels,
   .feature-grid,
   .area-band,
   .contact-grid,
+  .form-grid,
+  .form-actions,
   .footer-grid {
     grid-template-columns: 1fr;
   }
 
   .cta-band,
+  .related-panel,
   .footer-bottom {
     align-items: flex-start;
     flex-direction: column;
+  }
+
+  .related-links {
+    justify-content: flex-start;
   }
 }
 
@@ -717,7 +979,8 @@ textarea {
   }
 
   .hero-stats,
-  .area-list {
+  .area-list,
+  .mini-area-list {
     grid-template-columns: 1fr;
   }
 
@@ -729,6 +992,8 @@ textarea {
   .service-card,
   .feature,
   .area-panel,
+  .detail-panel,
+  .related-panel,
   .contact-panel,
   .cta-band {
     padding: 22px;

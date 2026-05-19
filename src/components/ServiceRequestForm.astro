@@ -1,0 +1,92 @@
+---
+import { business, services } from "../data/site";
+
+interface Props {
+  heading?: string;
+  intro?: string;
+  compact?: boolean;
+  source?: string;
+}
+
+const {
+  heading = "Request septic or wastewater service.",
+  intro = "Share the basics and Appalachian Wastewater will follow up with the right next step.",
+  compact = false,
+  source = "site-request-form",
+} = Astro.props;
+---
+
+<form
+  class:list={["request-form", compact && "request-form-compact"]}
+  action={business.emailHref}
+  method="post"
+  enctype="text/plain"
+  data-lead-form="service-request"
+  data-lead-source={source}
+>
+  <div class="form-heading">
+    <span class="form-kicker">Service Request</span>
+    <h2>{heading}</h2>
+    <p>{intro}</p>
+  </div>
+
+  <div class="form-grid">
+    <label>
+      Name
+      <input name="name" autocomplete="name" required />
+    </label>
+
+    <label>
+      Phone
+      <input name="phone" type="tel" autocomplete="tel" required />
+    </label>
+
+    <label>
+      Email
+      <input name="email" type="email" autocomplete="email" required />
+    </label>
+
+    <label>
+      City
+      <input name="city" autocomplete="address-level2" required />
+    </label>
+
+    <label class="form-wide">
+      Service Needed
+      <select name="service_needed" required>
+        <option value="">Select a service</option>
+        {services.map((service) => <option value={service.title}>{service.title}</option>)}
+        <option value="Not sure">Not sure yet</option>
+      </select>
+    </label>
+
+    <fieldset class="emergency-field">
+      <legend>Emergency?</legend>
+      <label>
+        <input type="radio" name="emergency" value="Yes" />
+        Yes
+      </label>
+      <label>
+        <input type="radio" name="emergency" value="No" checked />
+        No
+      </label>
+    </fieldset>
+
+    <label class="form-wide">
+      Notes
+      <textarea
+        name="notes"
+        placeholder="Tell us what is happening, property type, access notes, timing, or any alarms/backups."
+      ></textarea>
+    </label>
+  </div>
+
+  <div class="form-actions">
+    <button class="button button-primary" type="submit">Request Service</button>
+    <a class="button button-secondary" href={business.phoneHref}>Call Now</a>
+  </div>
+
+  <p class="form-footnote">
+    For urgent septic problems, call <a href={business.phoneHref}>{business.phone}</a>.
+  </p>
+</form>

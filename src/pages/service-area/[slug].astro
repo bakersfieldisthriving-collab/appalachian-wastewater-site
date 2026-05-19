@@ -1,0 +1,114 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import CtaBand from "../../components/CtaBand.astro";
+import { business } from "../../data/site";
+import { cityPages, coreServices, serviceLinks } from "../../data/cityPages";
+
+export function getStaticPaths() {
+  return cityPages.map((city) => ({
+    params: { slug: city.slug },
+    props: { city },
+  }));
+}
+
+const { city } = Astro.props;
+
+const schema = {
+  "@context": "https://schema.org",
+  "@type": "Service",
+  name: `Septic and wastewater service in ${city.name}`,
+  description: city.metaDescription,
+  provider: {
+    "@type": "LocalBusiness",
+    name: business.name,
+    telephone: business.phone,
+    email: business.email,
+    url: business.url,
+  },
+  areaServed: {
+    "@type": "City",
+    name: city.name,
+  },
+};
+---
+
+<BaseLayout title={city.seoTitle} description={city.metaDescription} canonical={`/service-area/${city.slug}/`} schema={schema}>
+  <section class="page-hero service-detail-hero">
+    <span class="eyebrow">Service Area</span>
+    <h1>{city.h1}</h1>
+    <p class="lead">{city.intro}</p>
+    <div class="hero-actions">
+      <a class="button button-primary" href={business.phoneHref}>Call {business.phone}</a>
+      <a class="button button-secondary" href="/contact/">Request Service</a>
+    </div>
+  </section>
+
+  <section class="section service-detail-grid">
+    <article class="detail-panel detail-panel-large">
+      <span class="eyebrow">Local Property Service</span>
+      <h2>Septic and wastewater support for {city.name}.</h2>
+      <p>{city.localContext}</p>
+      <p>
+        Service is available for {city.propertyTypes}. The goal is simple:
+        help property owners understand what is happening, schedule the right
+        service, and keep septic and wastewater systems easier to manage.
+      </p>
+    </article>
+
+    <aside class="detail-panel">
+      <span class="eyebrow">Direct Contact</span>
+      <h2>{business.phone}</h2>
+      <p>
+        Call or email Appalachian Wastewater with the property location,
+        symptoms, access notes, and timing.
+      </p>
+      <div class="stacked-actions">
+        <a class="button button-primary" href={business.phoneHref}>Call {business.phone}</a>
+        <a class="button button-secondary" href={business.emailHref}>{business.email}</a>
+      </div>
+    </aside>
+  </section>
+
+  <section class="section split-panels">
+    <div class="detail-panel">
+      <span class="eyebrow">Services Available</span>
+      <h2>Service options in {city.name}.</h2>
+      <ul class="check-list">
+        {coreServices.map((service) => <li>{service}</li>)}
+      </ul>
+    </div>
+
+    <div class="detail-panel">
+      <span class="eyebrow">Why Choose Us</span>
+      <h2>Professional, local, and easy to work with.</h2>
+      <p>{city.whyLocal}</p>
+      <ul class="check-list">
+        <li>Clear communication for property owners and managers</li>
+        <li>Clean field practices and respectful site work</li>
+        <li>Support for residential, rural, hospitality, church, rental, and light commercial properties</li>
+        <li>Modern wastewater branding without generic plumbing language</li>
+      </ul>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="related-panel">
+      <div>
+        <span class="eyebrow">Related Services</span>
+        <h2>Explore septic and wastewater services.</h2>
+        <p>
+          Learn more about the services Appalachian Wastewater provides for
+          {city.name} and nearby East Tennessee properties.
+        </p>
+      </div>
+      <div class="related-links">
+        {serviceLinks.map((service) => <a href={service.href}>{service.label}</a>)}
+      </div>
+    </div>
+  </section>
+
+  <CtaBand
+    title={`Need septic or wastewater service in ${city.name}?`}
+    text={`Call Appalachian Wastewater at ${business.phone} or request service for your property.`}
+  />
+</BaseLayout>
