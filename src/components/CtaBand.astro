@@ -1,0 +1,24 @@
+---
+import { business } from "../data/site";
+
+interface Props {
+  eyebrow?: string;
+  title: string;
+  text: string;
+  emergency?: boolean;
+}
+
+const { eyebrow = "Response Ready", title, text, emergency = false } = Astro.props;
+---
+
+<section class:list={["cta-band", emergency && "cta-band-emergency"]}>
+  <div>
+    <span class="eyebrow">{eyebrow}</span>
+    <h2>{title}</h2>
+    <p>{text}</p>
+  </div>
+  <div class="cta-actions">
+    <a class="button button-primary" href={business.phoneHref}>Call {business.phone}</a>
+    <a class="button button-secondary" href="/contact/">Request Service</a>
+  </div>
+</section>

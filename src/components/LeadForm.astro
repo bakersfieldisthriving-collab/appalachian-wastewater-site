@@ -1,0 +1,28 @@
+---
+import { business, services } from "../data/site";
+---
+
+<form class="lead-form" action={`mailto:${business.email}`} method="post" enctype="text/plain">
+  <span class="form-kicker">Request Service</span>
+  <h2>Tell us what is going on.</h2>
+  <label>
+    Name
+    <input name="name" autocomplete="name" required />
+  </label>
+  <label>
+    Phone
+    <input name="phone" type="tel" autocomplete="tel" required />
+  </label>
+  <label>
+    Service Needed
+    <select name="service">
+      {services.map((service) => <option>{service.title}</option>)}
+    </select>
+  </label>
+  <label>
+    Town or Property Area
+    <input name="location" autocomplete="address-level2" required />
+  </label>
+  <button class="button button-primary" type="submit">Request a Callback</button>
+  <p>For urgent septic problems, call <a href={business.phoneHref}>{business.phone}</a>.</p>
+</form>

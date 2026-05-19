@@ -1,0 +1,91 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import CtaBand from "../components/CtaBand.astro";
+import { business, serviceArea } from "../data/site";
+
+const description =
+  "Appalachian Wastewater serves Greeneville and nearby East Tennessee communities with septic pumping, inspections, maintenance, diagnostics, grease trap pumping, and emergency service.";
+
+const schema = {
+  "@context": "https://schema.org",
+  "@type": "LocalBusiness",
+  name: business.name,
+  telephone: business.phone,
+  email: business.email,
+  areaServed: serviceArea.map((name) => ({ "@type": "City", name })),
+};
+---
+
+<BaseLayout title="East Tennessee Service Area" description={description} schema={schema}>
+  <section class="page-hero">
+    <span class="eyebrow">Service Area</span>
+    <h1>Local septic and wastewater service for East Tennessee properties.</h1>
+    <p class="lead">
+      Appalachian Wastewater serves homes, rural properties, restaurants,
+      campgrounds, cabins, churches, rentals, and small businesses with
+      professional service and reliable scheduling.
+    </p>
+  </section>
+
+  <section class="section">
+    <div class="area-band">
+      <div class="area-panel">
+        <span class="eyebrow">Coverage</span>
+        <h2>Focused service for the towns and property types we know best.</h2>
+        <p>
+          We work with residential, rural, hospitality, church, rental, and
+          light commercial properties across this part of East Tennessee. If you
+          are nearby and do not see your town listed, reach out and we will
+          confirm availability.
+        </p>
+        <ul class="area-list">
+          {serviceArea.map((area) => <li>{area}</li>)}
+        </ul>
+      </div>
+      <div class="region-panel" aria-label="East Tennessee regional service presentation">
+        <span class="map-label">Service Region</span>
+        <strong>Greene County and nearby communities</strong>
+        <p>
+          A cleaner, local-first service area built around East Tennessee
+          properties that need dependable septic and wastewater help.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="section-header">
+      <div>
+        <span class="eyebrow">Who We Serve</span>
+        <h2>Homes, restaurants, campgrounds, cabins, churches, rentals, and small businesses.</h2>
+      </div>
+      <p>
+        From routine tank pumping to urgent septic problems, our team helps you
+        understand the issue and schedule the right service for the property.
+      </p>
+    </div>
+    <div class="feature-grid">
+      <div class="feature">
+        <strong>Homes and rentals</strong>
+        <p>Routine pumping, inspections, locating, and urgent septic help.</p>
+      </div>
+      <div class="feature">
+        <strong>Restaurants and businesses</strong>
+        <p>Grease trap pumping and septic support for local commercial properties.</p>
+      </div>
+      <div class="feature">
+        <strong>Rural and hospitality properties</strong>
+        <p>Site-aware service for cabins, campgrounds, churches, and rural systems.</p>
+      </div>
+      <div class="feature">
+        <strong>Property sales</strong>
+        <p>Septic inspections and locating support for buyers, sellers, and agents.</p>
+      </div>
+    </div>
+  </section>
+
+  <CtaBand
+    title="Not sure if your property is in range?"
+    text="Contact Appalachian Wastewater with your town and service need. We will confirm coverage and the right next step."
+  />
+</BaseLayout>

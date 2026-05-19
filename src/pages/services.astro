@@ -1,0 +1,75 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import ServiceCard from "../components/ServiceCard.astro";
+import CtaBand from "../components/CtaBand.astro";
+import { business, services } from "../data/site";
+
+const description =
+  "Septic pumping, inspections, emergency septic service, tank locating, drain field diagnostics, grease trap pumping, and septic maintenance for East Tennessee properties.";
+
+const schema = services.map((service) => ({
+  "@context": "https://schema.org",
+  "@type": "Service",
+  name: service.title,
+  description: service.description,
+  provider: {
+    "@type": "LocalBusiness",
+    name: business.name,
+    telephone: business.phone,
+    email: business.email,
+  },
+  areaServed: "East Tennessee",
+}));
+---
+
+<BaseLayout title="Septic & Wastewater Services for East Tennessee Properties" description={description} schema={schema}>
+  <section class="page-hero">
+    <span class="eyebrow">Septic & Wastewater Services</span>
+    <h1>Clear, dependable service for residential, rural, and light commercial properties.</h1>
+    <p class="lead">
+      From routine pumping to urgent septic problems, Appalachian Wastewater
+      helps property owners, restaurants, cabins, campgrounds, churches, and
+      small businesses choose the right service and keep systems working.
+    </p>
+    <div class="hero-actions">
+      <a class="button button-primary" href={business.phoneHref}>Call {business.phone}</a>
+      <a class="button button-secondary" href="/contact/">Request Service</a>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="services-grid">
+      {services.map((service, index) => (
+        <ServiceCard title={service.title} description={service.description} index={index} />
+      ))}
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="feature-grid">
+      <div class="feature">
+        <strong>Routine service</strong>
+        <p>Planned pumping and maintenance help reduce emergency risk for homes and businesses.</p>
+      </div>
+      <div class="feature">
+        <strong>Property confidence</strong>
+        <p>Inspections and locating help owners, buyers, sellers, and managers understand the septic system.</p>
+      </div>
+      <div class="feature">
+        <strong>Field diagnostics</strong>
+        <p>Drain field assessment helps identify saturation, flow problems, and warning signs early.</p>
+      </div>
+      <div class="feature">
+        <strong>Commercial support</strong>
+        <p>Grease trap pumping supports restaurants, kitchens, campgrounds, and light commercial sites.</p>
+      </div>
+    </div>
+  </section>
+
+  <CtaBand
+    emergency
+    eyebrow="Emergency Septic Service"
+    title="Need urgent septic response?"
+    text="Call for emergency service when backups, odors, alarms, or slow drains cannot wait."
+  />
+</BaseLayout>

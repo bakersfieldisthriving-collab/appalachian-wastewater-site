@@ -1,0 +1,86 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import { business, services } from "../data/site";
+
+const description =
+  "Contact Appalachian Wastewater for septic pumping, inspections, emergency septic service, drain field diagnostics, grease trap pumping, and maintenance for East Tennessee properties.";
+
+const schema = {
+  "@context": "https://schema.org",
+  "@type": "ContactPage",
+  name: `Contact ${business.name}`,
+  url: `${business.url}/contact/`,
+  about: {
+    "@type": "LocalBusiness",
+    name: business.name,
+    telephone: business.phone,
+    email: business.email,
+  },
+};
+---
+
+<BaseLayout title="Contact Appalachian Wastewater" description={description} schema={schema}>
+  <section class="page-hero">
+    <span class="eyebrow">Contact</span>
+    <h1>Request septic or wastewater service for your property.</h1>
+    <p class="lead">
+      Call for the fastest response, especially for backups, alarms, odors, or
+      slow drains. You can also send a service request for homes, businesses,
+      rentals, cabins, churches, restaurants, and rural properties.
+    </p>
+  </section>
+
+  <section class="section">
+    <div class="contact-grid">
+      <div class="contact-panel">
+        <span class="eyebrow">Service Request</span>
+        <h2>Tell us what is happening on site.</h2>
+        <form class="contact-form" action={`mailto:${business.email}`} method="post" enctype="text/plain">
+          <label>
+            Name
+            <input name="name" autocomplete="name" required />
+          </label>
+          <label>
+            Phone
+            <input name="phone" type="tel" autocomplete="tel" required />
+          </label>
+          <label>
+            Email
+            <input name="email" type="email" autocomplete="email" />
+          </label>
+          <label>
+            Service Type
+            <select name="service">
+              {services.map((service) => <option>{service.title}</option>)}
+            </select>
+          </label>
+          <label>
+            Property Location and Notes
+            <textarea name="message" placeholder="Address, access notes, symptoms, timing, and any alarms or backups." required></textarea>
+          </label>
+          <button class="button button-primary" type="submit">Send Request</button>
+        </form>
+      </div>
+
+      <aside class="contact-panel">
+        <span class="eyebrow">Direct Contact</span>
+        <h2>Reach Appalachian Wastewater.</h2>
+        <p>
+          For emergency septic service, call directly so we can understand the
+          problem and help you decide what to do next.
+        </p>
+        <div class="contact-actions">
+          <a class="button button-primary" href={business.phoneHref}>{business.phone}</a>
+          <a class="button button-secondary" href={business.emailHref}>{business.email}</a>
+        </div>
+        <div class="feature" style="margin-top: 28px;">
+          <strong>Helpful details</strong>
+          <p>
+            Share the property address, tank access if known, service history,
+            current symptoms, and whether this is an emergency.
+          </p>
+        </div>
+      </aside>
+    </div>
+  </section>
+</BaseLayout>

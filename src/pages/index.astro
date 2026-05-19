@@ -1,17 +1,157 @@
 ---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import ServiceCard from "../components/ServiceCard.astro";
+import CtaBand from "../components/CtaBand.astro";
+import LeadForm from "../components/LeadForm.astro";
+import { business, services, serviceArea } from "../data/site";
 
+const description =
+  "Appalachian Wastewater provides professional septic and wastewater service for East Tennessee properties, including homes, rural sites, restaurants, cabins, churches, and small businesses.";
+
+const schema = {
+  "@context": "https://schema.org",
+  "@type": "LocalBusiness",
+  name: business.name,
+  url: business.url,
+  telephone: business.phone,
+  email: business.email,
+  image: `${business.url}/images/appalachian-wastewater-infrastructure.png`,
+  areaServed: serviceArea.map((name) => ({ "@type": "City", name })),
+  address: {
+    "@type": "PostalAddress",
+    addressRegion: "TN",
+    addressCountry: "US",
+  },
+  priceRange: "$$",
+  serviceType: services.map((service) => service.title),
+};
 ---
 
-<html lang="en">
-	<head>
-		<meta charset="utf-8" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<link rel="icon" href="/favicon.ico" />
-		<meta name="viewport" content="width=device-width" />
-		<meta name="generator" content={Astro.generator} />
-		<title>Astro</title>
-	</head>
-	<body>
-		<h1>Astro</h1>
-	</body>
-</html>
+<BaseLayout title="Professional Septic & Wastewater Service for East Tennessee Properties" description={description} schema={schema}>
+  <section class="hero">
+    <div class="hero-media">
+      <img
+        src="/images/appalachian-wastewater-infrastructure.png"
+        alt="Professional septic service truck at an East Tennessee property"
+        loading="eager"
+      />
+    </div>
+    <div class="hero-inner">
+      <div class="hero-content">
+        <div>
+          <span class="eyebrow">East Tennessee Septic Service</span>
+          <h1>Professional septic and wastewater service for East Tennessee properties.</h1>
+          <p class="lead">
+            Appalachian Wastewater serves homes, rural properties, restaurants,
+            cabins, churches, rentals, campgrounds, and small businesses with
+            clear communication and dependable field service.
+          </p>
+          <div class="hero-actions">
+            <a class="button button-primary" href={business.phoneHref}>Call {business.phone}</a>
+            <a class="button button-secondary" href="/services/">View Services</a>
+          </div>
+        </div>
+        <LeadForm />
+      </div>
+      <div class="hero-stats" aria-label="Company strengths">
+        <div class="hero-stat">
+          <strong>Fast</strong>
+          <span>Emergency response</span>
+        </div>
+        <div class="hero-stat">
+          <strong>7</strong>
+          <span>Septic and wastewater services</span>
+        </div>
+        <div class="hero-stat">
+          <strong>Local</strong>
+          <span>East Tennessee service</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="section-header">
+      <div>
+        <span class="eyebrow">Services Overview</span>
+        <h2>Straightforward service for homes, businesses, and rural properties.</h2>
+      </div>
+      <p>
+        Whether you need routine pumping, grease trap service, an inspection, or
+        help with a septic problem, we make the next step clear and keep the
+        property clean.
+      </p>
+    </div>
+    <div class="services-grid">
+      {services.slice(0, 6).map((service, index) => (
+        <ServiceCard title={service.title} description={service.description} index={index} />
+      ))}
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="section-header">
+      <div>
+        <span class="eyebrow">Why Choose Us</span>
+        <h2>Premium service without making septic problems complicated.</h2>
+      </div>
+      <p>
+        Septic issues are stressful. Appalachian Wastewater brings a calm,
+        capable approach for property owners who need the job handled correctly.
+      </p>
+    </div>
+    <div class="feature-grid">
+      <div class="feature">
+        <strong>Property-first service</strong>
+        <p>We explain the work clearly and respect the site from arrival to cleanup.</p>
+      </div>
+      <div class="feature">
+        <strong>Local experience</strong>
+        <p>Service shaped around rural properties, older systems, hospitality sites, and local soil conditions.</p>
+      </div>
+      <div class="feature">
+        <strong>Responsive help</strong>
+        <p>When something backs up or smells wrong, we help you move quickly and calmly.</p>
+      </div>
+      <div class="feature">
+        <strong>Premium standards</strong>
+        <p>Modern equipment, clean practices, and dependable follow-through on every visit.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="area-band">
+      <div class="area-panel">
+        <span class="eyebrow">Service Area</span>
+        <h2>Focused septic and wastewater service across our East Tennessee region.</h2>
+        <p>
+          We serve residential, rural, hospitality, church, rental, restaurant,
+          and light commercial properties across Greene County and nearby
+          communities.
+        </p>
+        <ul class="area-list">
+          {serviceArea.slice(0, 6).map((area) => <li>{area}</li>)}
+        </ul>
+      </div>
+      <div class="region-panel" aria-label="East Tennessee regional service presentation">
+        <span class="map-label">Primary Service Region</span>
+        <strong>Greene County and nearby East Tennessee communities</strong>
+        <p>Greeneville, Chuckey, Bulls Gap, Afton, Jonesborough, and surrounding towns.</p>
+      </div>
+    </div>
+  </section>
+
+  <CtaBand
+    emergency
+    eyebrow="Emergency Service"
+    title="Septic backup, strong odors, or slow drains?"
+    text="Call Appalachian Wastewater for prompt help with urgent septic problems."
+  />
+
+  <CtaBand
+    eyebrow="Request Service"
+    title="Schedule septic or wastewater service with a professional local team."
+    text="Tell us what type of property you have, what you are noticing, and when you need help. We will guide the next step."
+  />
+</BaseLayout>
