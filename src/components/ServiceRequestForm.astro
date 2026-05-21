@@ -14,6 +14,8 @@ const {
   compact = false,
   source = "site-request-form",
 } = Astro.props;
+
+const zapierWebhookUrl = import.meta.env.PUBLIC_ZAPIER_WEBHOOK_URL ?? "";
 ---
 
 <form
@@ -23,6 +25,7 @@ const {
   enctype="text/plain"
   data-lead-form="service-request"
   data-lead-source={source}
+  data-zapier-webhook={zapierWebhookUrl}
 >
   <div class="form-heading">
     <span class="form-kicker">Service Request</span>
@@ -82,11 +85,112 @@ const {
   </div>
 
   <div class="form-actions">
-    <button class="button button-primary" type="submit">Request Service</button>
+    <button class="button button-primary" type="submit" data-submit-label="Request Service">
+      Request Service
+    </button>
     <a class="button button-secondary" href={business.phoneHref}>Call Now</a>
   </div>
+
+  <p class="form-status" data-form-status aria-live="polite"></p>
 
   <p class="form-footnote">
     For urgent septic problems, call <a href={business.phoneHref}>{business.phone}</a>.
   </p>
 </form>
+
+<script>
+  const forms = document.querySelectorAll("[data-lead-form='service-request']");
+
+  const getFieldValue = (form, name) => {
+    const field = form.elements.namedItem(name);
+    if (!field) return "";
+    if (field instanceof RadioNodeList) return field.value;
+    return field.value;
+  };
+
+  forms.forEach((form) => {
+    if (form.dataset.zapierReady === "true") return;
+    form.dataset.zapierReady = "true";
+
+    form.addEventListener("submit", async (event) => {
+      event.preventDefault();
+
+      const status = form.querySelector("[data-form-status]");
+      const submitButton = form.querySelector("button[type='submit']");
+      const defaultLabel = submitButton?.dataset.submitLabel || "Request Service";
+      const webhookUrl = form.dataset.zapierWebhook || "";
+
+      status?.classList.remove("is-success", "is-error");
+
+      if (!form.checkValidity()) {
+        form.reportValidity();
+        return;
+      }
+
+      if (!webhookUrl) {
+        console.error(
+          "Missing PUBLIC_ZAPIER_WEBHOOK_URL. Lead form submissions cannot be sent to Zapier.",
+        );
+        if (status) {
+          status.textContent =
+            "Online requests are not connected yet. Please call (423) 470-3769 or email tyler@appalachianwastewater.com.";
+          status.classList.add("is-error");
+        }
+        return;
+      }
+
+      const payload = {
+        name: getFieldValue(form, "name"),
+        phone: getFieldValue(form, "phone"),
+        email: getFieldValue(form, "email"),
+        city: getFieldValue(form, "city"),
+        service: getFieldValue(form, "service_needed"),
+        emergency: getFieldValue(form, "emergency"),
+        notes: getFieldValue(form, "notes"),
+        pageUrl: window.location.href,
+        submittedAt: new Date().toISOString(),
+      };
+
+      try {
+        if (submitButton) {
+          submitButton.disabled = true;
+          submitButton.textContent = "Sending...";
+        }
+        if (status) {
+          status.textContent = "Sending your request...";
+        }
+
+        const response = await fetch(webhookUrl, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(payload),
+        });
+
+        if (!response.ok) {
+          throw new Error(`Zapier webhook returned ${response.status}`);
+        }
+
+        form.reset();
+        if (status) {
+          status.textContent =
+            "Request sent. Appalachian Wastewater will review your information and follow up.";
+          status.classList.add("is-success");
+        }
+      } catch (error) {
+        console.error("Lead form submission failed", error);
+        if (status) {
+          status.textContent =
+            "Something went wrong sending the request. Please call (423) 470-3769 or try again.";
+          status.classList.add("is-error");
+        }
+      } finally {
+        if (submitButton) {
+          submitButton.disabled = false;
+          submitButton.textContent = defaultLabel;
+        }
+      }
+    });
+  });
+</script>
