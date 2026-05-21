@@ -191,16 +191,27 @@ const zapierWebhookUrl = import.meta.env.PUBLIC_ZAPIER_WEBHOOK_URL ?? "";
         return;
       }
 
+      const submittedAt = new Date().toISOString();
+      const emergency = getFieldValue(form, "emergency");
       const payload = {
-        name: getFieldValue(form, "name"),
-        phone: getFieldValue(form, "phone"),
-        email: getFieldValue(form, "email"),
-        city: getFieldValue(form, "city"),
-        service: getFieldValue(form, "service_needed"),
-        emergency: getFieldValue(form, "emergency"),
-        notes: getFieldValue(form, "notes"),
-        pageUrl: window.location.href,
-        submittedAt: new Date().toISOString(),
+        Timestamp: submittedAt,
+        Source: "Website Form",
+        Name: getFieldValue(form, "name"),
+        Phone: getFieldValue(form, "phone"),
+        Email: getFieldValue(form, "email"),
+        City: getFieldValue(form, "city"),
+        "Service Needed": getFieldValue(form, "service_needed"),
+        "Emergency?": emergency,
+        Notes: getFieldValue(form, "notes"),
+        Status: "New",
+        Priority: emergency === "Yes" ? "Urgent" : "Normal",
+        "Assigned To": "Tyler",
+        "Follow Up Date": "",
+        "Scheduled Date": "",
+        "Job Value": "",
+        Outcome: "",
+        "Page URL": window.location.href,
+        "Submitted At": submittedAt,
       };
 
       try {
