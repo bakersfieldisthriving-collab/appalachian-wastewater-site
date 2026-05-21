@@ -108,6 +108,58 @@ const zapierWebhookUrl = import.meta.env.PUBLIC_ZAPIER_WEBHOOK_URL ?? "";
     return field.value;
   };
 
+  const getWebhookDebugTarget = (webhookUrl) => {
+    try {
+      const url = new URL(webhookUrl);
+      return `${url.origin}${url.pathname}`;
+    } catch {
+      return "Invalid webhook URL";
+    }
+  };
+
+  const setStatus = (status, message, state) => {
+    if (!status) return;
+    status.textContent = message;
+    status.classList.remove("is-success", "is-error");
+    if (state) status.classList.add(state);
+  };
+
+  const postJsonToZapier = async (webhookUrl, payload) => {
+    console.info("Submitting lead form to Zapier webhook.", {
+      target: getWebhookDebugTarget(webhookUrl),
+      contentType: "application/json",
+      payload,
+    });
+
+    return fetch(webhookUrl, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(payload),
+    });
+  };
+
+  const postNoCorsFallback = async (webhookUrl, payload) => {
+    console.warn(
+      "Primary Zapier JSON request failed. Trying no-cors fallback for browser webhook delivery.",
+      {
+        target: getWebhookDebugTarget(webhookUrl),
+        contentType: "text/plain",
+        payload,
+      },
+    );
+
+    return fetch(webhookUrl, {
+      method: "POST",
+      mode: "no-cors",
+      headers: {
+        "Content-Type": "text/plain;charset=UTF-8",
+      },
+      body: JSON.stringify(payload),
+    });
+  };
+
   forms.forEach((form) => {
     if (form.dataset.zapierReady === "true") return;
     form.dataset.zapierReady = "true";
@@ -120,7 +172,7 @@ const zapierWebhookUrl = import.meta.env.PUBLIC_ZAPIER_WEBHOOK_URL ?? "";
       const defaultLabel = submitButton?.dataset.submitLabel || "Request Service";
       const webhookUrl = form.dataset.zapierWebhook || "";
 
-      status?.classList.remove("is-success", "is-error");
+      setStatus(status, "", undefined);
 
       if (!form.checkValidity()) {
         form.reportValidity();
@@ -131,11 +183,11 @@ const zapierWebhookUrl = import.meta.env.PUBLIC_ZAPIER_WEBHOOK_URL ?? "";
         console.error(
           "Missing PUBLIC_ZAPIER_WEBHOOK_URL. Lead form submissions cannot be sent to Zapier.",
         );
-        if (status) {
-          status.textContent =
-            "Online requests are not connected yet. Please call (423) 470-3769 or email tyler@appalachianwastewater.com.";
-          status.classList.add("is-error");
-        }
+        setStatus(
+          status,
+          "Online requests are not connected yet. Please call (423) 470-3769 or email tyler@appalachianwastewater.com.",
+          "is-error",
+        );
         return;
       }
 
@@ -156,35 +208,58 @@ const zapierWebhookUrl = import.meta.env.PUBLIC_ZAPIER_WEBHOOK_URL ?? "";
           submitButton.disabled = true;
           submitButton.textContent = "Sending...";
         }
-        if (status) {
-          status.textContent = "Sending your request...";
+        setStatus(status, "Sending your request...", undefined);
+
+        let response;
+
+        try {
+          response = await postJsonToZapier(webhookUrl, payload);
+        } catch (primaryError) {
+          console.error("Primary Zapier JSON request failed.", {
+            error: primaryError,
+            target: getWebhookDebugTarget(webhookUrl),
+            payload,
+          });
+          response = await postNoCorsFallback(webhookUrl, payload);
         }
 
-        const response = await fetch(webhookUrl, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(payload),
-        });
-
-        if (!response.ok) {
-          throw new Error(`Zapier webhook returned ${response.status}`);
+        if (response.type === "opaque") {
+          console.info(
+            "Zapier fallback request was accepted by the browser as an opaque no-cors response.",
+            {
+              target: getWebhookDebugTarget(webhookUrl),
+              payload,
+            },
+          );
+        } else if (!response.ok) {
+          const responseText = await response.text().catch(() => "");
+          throw new Error(
+            `Zapier webhook returned ${response.status} ${response.statusText}. ${responseText}`,
+          );
+        } else {
+          console.info("Zapier webhook accepted lead form submission.", {
+            status: response.status,
+            target: getWebhookDebugTarget(webhookUrl),
+          });
         }
 
         form.reset();
-        if (status) {
-          status.textContent =
-            "Request sent. Appalachian Wastewater will review your information and follow up.";
-          status.classList.add("is-success");
-        }
+        setStatus(
+          status,
+          "Request sent. Appalachian Wastewater will review your information and follow up.",
+          "is-success",
+        );
       } catch (error) {
-        console.error("Lead form submission failed", error);
-        if (status) {
-          status.textContent =
-            "Something went wrong sending the request. Please call (423) 470-3769 or try again.";
-          status.classList.add("is-error");
-        }
+        console.error("Lead form submission failed after all attempts.", {
+          error,
+          target: getWebhookDebugTarget(webhookUrl),
+          payload,
+        });
+        setStatus(
+          status,
+          "Something went wrong sending the request. Please call (423) 470-3769 or try again.",
+          "is-error",
+        );
       } finally {
         if (submitButton) {
           submitButton.disabled = false;
